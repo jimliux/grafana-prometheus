@@ -1,0 +1,1251 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "win-gpu-dashboard-v1",
+    "namespace": "default",
+    "uid": "f9db28f7-834b-4c10-9379-76485b22af80",
+    "resourceVersion": "1790523643556007",
+    "generation": 3,
+    "creationTimestamp": "2026-09-27T15:29:14Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "1050874478723072"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:efz34wrve07i8d",
+      "grafana.app/saved-from-ui": "Grafana v13.2.2 (1bea008f7e)",
+      "grafana.app/updatedBy": "user:efz34wrve07i8d",
+      "grafana.app/updatedTimestamp": "2026-09-27T15:40:43Z"
+    }
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "datasource": { "name": "-- Grafana --" },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "builtIn": true
+        }
+      }
+    ],
+    "cursorSync": "Crosshair",
+    "description": "Mixed Windows & Nvidia GPU Overview v1.02",
+    "editable": true,
+    "elements": {
+      "panel-110": {
+        "kind": "Panel",
+        "spec": {
+          "id": 110,
+          "title": "GPU Utilization by Host",
+          "description": "Percent of time over the past sample period during which one or more kernels was executing on the GPU.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "label_replace((avg by (instance) (nvidia_smi_utilization_gpu_ratio{job=~\"$gpu_job\"}) * 100) * on(instance) group_left(name) (nvidia_smi_gpu_info{job=~\"$gpu_job\"} * 0 + 1), \"name\", \"$1\", \"name\", \"(?:NVIDIA\\\\s*)?(.*)\")",
+                        "legendFormat": "{{instance}} - {{name}}",
+                        "range": true
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.2",
+            "spec": {
+              "options": {
+                "alertThreshold": true,
+                "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true },
+                "tooltip": { "hideZeros": false, "mode": "multi", "sort": "desc" }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent", "min": 0, "max": 100,
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }] },
+                  "color": { "mode": "palette-classic" },
+                  "noValue": "Not reported by driver",
+                  "custom": {
+                    "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto",
+                    "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
+                    "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear",
+                    "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "showValues": false,
+                    "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-111": {
+        "kind": "Panel",
+        "spec": {
+          "id": 111,
+          "title": "Memory Utilization by Host",
+          "description": "每条线代表一台 GPU 主机。同一显卡的两条线：虚线 = Util，实线 = Alloc。",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "label_replace((avg by (instance) (nvidia_smi_utilization_memory_ratio{job=~\"$gpu_job\"}) * 100) * on(instance) group_left(name) (nvidia_smi_gpu_info{job=~\"$gpu_job\"} * 0 + 1), \"name\", \"$1\", \"name\", \"(?:NVIDIA\\\\s*)?(.*)\")",
+                        "legendFormat": "{{instance}} - {{name}}",
+                        "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "label_replace(((nvidia_smi_memory_used_bytes{job=~\"$gpu_job\"} / nvidia_smi_memory_total_bytes{job=~\"$gpu_job\"}) * 100) * on(instance) group_left(name) (nvidia_smi_gpu_info{job=~\"$gpu_job\"} * 0 + 1), \"name\", \"$1\", \"name\", \"(?:NVIDIA\\\\s*)?(.*)\")",
+                        "legendFormat": "{{instance}} - {{name}}",
+                        "range": true
+                      }
+                    },
+                    "refId": "B", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "timeseries", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "alertThreshold": true,
+                "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true },
+                "tooltip": { "hideZeros": false, "mode": "multi", "sort": "desc" }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent", "min": 0, "max": 100,
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }] },
+                  "color": { "mode": "palette-classic-by-name" },
+                  "noValue": "Not reported by driver",
+                  "custom": {
+                    "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto",
+                    "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
+                    "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear",
+                    "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "showValues": false,
+                    "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": { "id": "byFrameRefID", "options": "A" },
+                    "properties": [
+                      { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-15": {
+        "kind": "Panel",
+        "spec": {
+          "id": 15,
+          "title": "GPU Temperature",
+          "description": "Core GPU temperature in degrees C.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "label_replace((nvidia_smi_temperature_gpu{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) * on(instance) group_left(name) (nvidia_smi_gpu_info{job=~\"$gpu_job\"} * 0 + 1), \"name\", \"$1\", \"name\", \"(?:NVIDIA\\\\s*)?(.*)\")",
+                        "legendFormat": "{{instance}} - {{name}}",
+                        "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "timeseries", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "alertThreshold": true,
+                "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true },
+                "tooltip": { "hideZeros": false, "mode": "multi", "sort": "desc" }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "celsius", "min": 0, "max": 100,
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "transparent" }] },
+                  "color": { "mode": "fixed", "fixedColor": "orange" },
+                  "custom": {
+                    "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto",
+                    "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
+                    "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear",
+                    "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "showValues": false,
+                    "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-19": {
+        "kind": "Panel",
+        "spec": {
+          "id": 19,
+          "title": "CPU Usage",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 - (avg(irate(windows_cpu_time_total{job=~\"$job\",instance=~\"$instance\",mode=\"idle\"}[2m])))*100",
+                        "legendFormat": "",
+                        "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": { "maxDataPoints": 100 }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "gauge", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "barShape": "flat", "barWidthFactor": 0.54,
+                "effects": { "barGlow": false, "centerGlow": false, "gradient": false },
+                "endpointMarker": "point", "minVizHeight": 75, "minVizWidth": 75, "orientation": "auto",
+                "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+                "segmentCount": 63, "segmentSpacing": 0.3, "shape": "gauge",
+                "showThresholdLabels": false, "showThresholdMarkers": true, "sizing": "auto",
+                "sparkline": true, "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent", "min": 0, "max": 100,
+                  "mappings": [{ "type": "value", "options": { "": { "text": "" } } }],
+                  "thresholds": {
+                    "mode": "percentage",
+                    "steps": [
+                      { "value": 0, "color": "green" },
+                      { "value": 60, "color": "#EAB839" },
+                      { "value": 80, "color": "red" }
+                    ]
+                  },
+                  "color": { "mode": "thresholds" }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-21": {
+        "kind": "Panel",
+        "spec": {
+          "id": 21,
+          "title": "Memory Usage",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 - (windows_memory_physical_free_bytes{job=~\"$job\",instance=~\"$instance\"} / windows_memory_physical_total_bytes{job=~\"$job\",instance=~\"$instance\"})*100",
+                        "instant": false, "legendFormat": "", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": { "maxDataPoints": 100 }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "gauge", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "barShape": "flat", "barWidthFactor": 0.54,
+                "effects": { "barGlow": false, "centerGlow": false, "gradient": false },
+                "endpointMarker": "point", "minVizHeight": 75, "minVizWidth": 75, "orientation": "auto",
+                "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+                "segmentCount": 63, "segmentSpacing": 0.3, "shape": "gauge",
+                "showThresholdLabels": false, "showThresholdMarkers": true, "sizing": "auto",
+                "sparkline": true, "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent", "min": 0, "max": 100,
+                  "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      { "value": 0, "color": "#299c46" },
+                      { "value": 80, "color": "rgba(237, 129, 40, 0.89)" },
+                      { "value": 90, "color": "#d44a3a" }
+                    ]
+                  },
+                  "color": { "mode": "thresholds" }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-33": {
+        "kind": "Panel",
+        "spec": {
+          "id": 33,
+          "title": "Start-up time",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "time() - process_start_time_seconds{job=~\"$job\",instance=~\"$instance\"}",
+                        "legendFormat": "", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": { "maxDataPoints": 100 }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "stat", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+                "showPercentChange": false, "textMode": "auto", "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "s", "decimals": 0,
+                  "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }, { "value": 80, "color": "red" }] },
+                  "color": { "mode": "thresholds" }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-35": {
+        "kind": "Panel",
+        "spec": {
+          "id": 35,
+          "title": "CPU cores",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "windows_cpu_logical_processor {job=~\"$job\",instance=~\"$instance\"}",
+                        "legendFormat": "", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": { "maxDataPoints": 100 }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "stat", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+                "showPercentChange": false, "textMode": "auto", "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "none", "decimals": 0,
+                  "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }, { "value": 80, "color": "red" }] },
+                  "color": { "mode": "thresholds" }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-37": {
+        "kind": "Panel",
+        "spec": {
+          "id": 37,
+          "title": "Total Memory",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "windows_memory_physical_total_bytes{job=~\"$job\",instance=~\"$instance\"}",
+                        "legendFormat": "", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": { "maxDataPoints": 100 }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "stat", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+                "showPercentChange": false, "textMode": "auto", "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "bytes", "decimals": 1,
+                  "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }, { "value": 80, "color": "red" }] },
+                  "color": { "mode": "thresholds" }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-47": {
+        "kind": "Panel",
+        "spec": {
+          "id": 47,
+          "title": "CPU Usage by Host",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 - (avg by (instance) (irate(windows_cpu_time_total{job=~\"$job\",mode=\"idle\"}[2m])) * 100)",
+                        "legendFormat": "{{instance}}", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "timeseries", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "alertThreshold": true,
+                "legend": { "calcs": ["mean", "lastNotNull", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+                "tooltip": { "hideZeros": false, "mode": "multi", "sort": "desc" }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent", "min": 0, "max": 100,
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }, { "value": 80, "color": "red" }] },
+                  "color": { "mode": "palette-classic" },
+                  "custom": {
+                    "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto",
+                    "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
+                    "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear",
+                    "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "showValues": false,
+                    "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-49": {
+        "kind": "Panel",
+        "spec": {
+          "id": 49,
+          "title": "Memory Usage by Host",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100.0 - 100 * windows_memory_physical_free_bytes {job=~\"$job\"} / windows_memory_physical_total_bytes{job=~\"$job\"}",
+                        "legendFormat": "{{instance}}", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "100 * windows_memory_committed_bytes{job=~\"$job\"} / windows_memory_commit_limit{job=~\"$job\"}",
+                        "legendFormat": "{{instance}}", "range": true
+                      }
+                    },
+                    "refId": "B", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "timeseries", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "alertThreshold": true,
+                "legend": { "calcs": ["mean", "lastNotNull", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+                "tooltip": { "hideZeros": false, "mode": "multi", "sort": "none" }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent", "min": 0, "max": 100,
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }, { "value": 80, "color": "red" }] },
+                  "color": { "mode": "palette-classic-by-name" },
+                  "custom": {
+                    "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto",
+                    "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "opacity",
+                    "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear",
+                    "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "showValues": false,
+                    "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": { "id": "byFrameRefID", "options": "B" },
+                    "properties": [
+                      { "id": "custom.lineStyle", "value": { "dash": [10, 10], "fill": "dash" } }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-6": {
+        "kind": "Panel",
+        "spec": {
+          "id": 6,
+          "title": "GPU Utilization",
+          "description": "Percent of time over the past sample period during which one or more kernels was executing on the GPU.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "nvidia_smi_utilization_gpu_ratio{job=~\"$gpu_job\", instance=~\"$gpu_instance\"} * 100",
+                        "legendFormat": "", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": { "maxDataPoints": 100 }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "gauge", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "barShape": "flat", "barWidthFactor": 0.54,
+                "effects": { "barGlow": false, "centerGlow": false, "gradient": false },
+                "endpointMarker": "point", "minVizHeight": 75, "minVizWidth": 75, "orientation": "auto",
+                "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+                "segmentCount": 63, "segmentSpacing": 0.3, "shape": "gauge",
+                "showThresholdLabels": false, "showThresholdMarkers": true, "sizing": "auto",
+                "sparkline": true, "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent", "min": 0, "max": 100,
+                  "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      { "value": 0, "color": "#299c46" },
+                      { "value": 80, "color": "rgba(237, 129, 40, 0.89)" },
+                      { "value": 90, "color": "#d44a3a" }
+                    ]
+                  },
+                  "color": { "mode": "thresholds" }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-7": {
+        "kind": "Panel",
+        "spec": {
+          "id": 7,
+          "title": "GPU Mem Utilization",
+          "description": "Percent of time over the past sample period during which global (device) memory was being read or written.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "nvidia_smi_utilization_memory_ratio{job=~\"$gpu_job\", instance=~\"$gpu_instance\"} * 100",
+                        "legendFormat": "", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": { "maxDataPoints": 100 }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "gauge", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "barShape": "flat", "barWidthFactor": 0.54,
+                "effects": { "barGlow": false, "centerGlow": false, "gradient": false },
+                "endpointMarker": "point", "minVizHeight": 75, "minVizWidth": 75, "orientation": "auto",
+                "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+                "segmentCount": 63, "segmentSpacing": 0.3, "shape": "gauge",
+                "showThresholdLabels": false, "showThresholdMarkers": true, "sizing": "auto",
+                "sparkline": true, "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent", "min": 0, "max": 100,
+                  "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      { "value": 0, "color": "#299c46" },
+                      { "value": 80, "color": "rgba(237, 129, 40, 0.89)" },
+                      { "value": 90, "color": "#d44a3a" }
+                    ]
+                  },
+                  "color": { "mode": "thresholds" }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-8": {
+        "kind": "Panel",
+        "spec": {
+          "id": 8,
+          "title": "Power Draw",
+          "description": "The last measured power draw for the entire board, in watts.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "label_replace((nvidia_smi_power_draw_watts{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) * on(instance) group_left(name) (nvidia_smi_gpu_info{job=~\"$gpu_job\"} * 0 + 1), \"name\", \"$1\", \"name\", \"(?:NVIDIA\\\\s*)?(.*)\")",
+                        "legendFormat": "{{instance}} - {{name}}",
+                        "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "timeseries", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "alertThreshold": true,
+                "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true },
+                "tooltip": { "hideZeros": false, "mode": "multi", "sort": "desc" }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "watt", "min": 0,
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "yellow" }] },
+                  "color": { "mode": "fixed", "fixedColor": "yellow" },
+                  "custom": {
+                    "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto",
+                    "barAlignment": 0, "barWidthFactor": 0.6, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none",
+                    "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "linear",
+                    "lineWidth": 1, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "showValues": false,
+                    "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-80": {
+        "kind": "Panel",
+        "spec": {
+          "id": 80,
+          "title": "Recovery",
+          "description": "Recovery action the driver recommends for this GPU.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "nvidia_smi_gpu_recovery_action{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}",
+                        "instant": false, "legendFormat": "__auto", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "stat", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+                "showPercentChange": false, "text": {}, "textMode": "value", "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "", "decimals": 0,
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": { "text": "Healthy", "color": "#56A64B", "index": 0 },
+                        "1": { "text": "GPU Reset", "color": "#FF9830", "index": 1 },
+                        "2": { "text": "Node Reboot", "color": "#C4162A", "index": 2 },
+                        "3": { "text": "Drain P2P", "color": "#F2CC0C", "index": 3 },
+                        "4": { "text": "Drain & Reset", "color": "#E02F44", "index": 4 }
+                      }
+                    }
+                  ],
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }] },
+                  "color": { "mode": "fixed", "fixedColor": "text" },
+                  "noValue": "Not reported by driver"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-81": {
+        "kind": "Panel",
+        "spec": {
+          "id": 81,
+          "title": "Throttling",
+          "description": "Number of performance-limiting throttle reasons currently active.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "(sum(nvidia_smi_clocks_event_reasons_sw_power_cap{job=~\"$gpu_job\", instance=~\"$gpu_instance\"} or nvidia_smi_clocks_throttle_reasons_sw_power_cap{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) or (sum(nvidia_smi_gpu_info{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) * 0)) + (sum(nvidia_smi_clocks_event_reasons_sw_thermal_slowdown{job=~\"$gpu_job\", instance=~\"$gpu_instance\"} or nvidia_smi_clocks_throttle_reasons_sw_thermal_slowdown{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) or (sum(nvidia_smi_gpu_info{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) * 0)) + (sum(nvidia_smi_clocks_event_reasons_hw_thermal_slowdown{job=~\"$gpu_job\", instance=~\"$gpu_instance\"} or nvidia_smi_clocks_throttle_reasons_hw_thermal_slowdown{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) or (sum(nvidia_smi_gpu_info{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) * 0)) + (sum(nvidia_smi_clocks_event_reasons_hw_power_brake_slowdown{job=~\"$gpu_job\", instance=~\"$gpu_instance\"} or nvidia_smi_clocks_throttle_reasons_hw_power_brake_slowdown{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) or (sum(nvidia_smi_gpu_info{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) * 0))",
+                        "legendFormat": "", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "stat", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+                "showPercentChange": false, "text": {}, "textMode": "value", "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "", "decimals": 0,
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "0": { "text": "None", "color": "#56A64B", "index": 0 },
+                        "1": { "text": "1 reason active", "color": "#FFB357", "index": 1 },
+                        "2": { "text": "2 reasons active", "color": "#FF9830", "index": 2 },
+                        "3": { "text": "3 reasons active", "color": "#E02F44", "index": 3 },
+                        "4": { "text": "4 reasons active", "color": "#C4162A", "index": 4 }
+                      }
+                    }
+                  ],
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }] },
+                  "color": { "mode": "fixed", "fixedColor": "text" }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-82": {
+        "kind": "Panel",
+        "spec": {
+          "id": 82,
+          "title": "ECC Errors",
+          "description": "Lifetime uncorrected ECC error count.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
+                      "datasource": { "name": "t4f0shgRk" },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(nvidia_smi_ecc_errors_uncorrected_aggregate_total{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) or sum({__name__=~\"nvidia_smi_ecc_errors_uncorrected_aggregate_.+\", job=~\"$gpu_job\", instance=~\"$gpu_instance\"})",
+                        "legendFormat": "", "range": true
+                      }
+                    },
+                    "refId": "A", "hidden": false
+                  }
+                }
+              ],
+              "transformations": [], "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig", "group": "stat", "version": "13.2.2",
+            "spec": {
+              "options": {
+                "colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": { "calcs": ["last"], "fields": "", "values": false },
+                "showPercentChange": false, "text": {}, "textMode": "value", "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "", "decimals": 0,
+                  "mappings": [{ "type": "value", "options": { "0": { "text": "None", "color": "#56A64B", "index": 0 } } }],
+                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "#6E7B8B" }, { "value": 1, "color": "#E02F44" }] },
+                  "color": { "mode": "fixed", "fixedColor": "text" },
+                  "noValue": "No ECC reported"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "RowsLayout",
+      "spec": {
+        "rows": [
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "CPU / GPU Details — CPU: $instance / GPU: $gpu_instance",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    { "kind": "GridLayoutItem", "spec": { "x": 0, "y": 0, "width": 3, "height": 4, "element": { "kind": "ElementReference", "name": "panel-33" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 3, "y": 0, "width": 5, "height": 6, "element": { "kind": "ElementReference", "name": "panel-19" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 8, "y": 0, "width": 5, "height": 6, "element": { "kind": "ElementReference", "name": "panel-6" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 13, "y": 0, "width": 8, "height": 6, "element": { "kind": "ElementReference", "name": "panel-15" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 21, "y": 0, "width": 3, "height": 4, "element": { "kind": "ElementReference", "name": "panel-80" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 0, "y": 4, "width": 3, "height": 4, "element": { "kind": "ElementReference", "name": "panel-35" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 21, "y": 4, "width": 3, "height": 4, "element": { "kind": "ElementReference", "name": "panel-81" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 3, "y": 6, "width": 5, "height": 6, "element": { "kind": "ElementReference", "name": "panel-21" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 8, "y": 6, "width": 5, "height": 6, "element": { "kind": "ElementReference", "name": "panel-7" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 13, "y": 6, "width": 8, "height": 6, "element": { "kind": "ElementReference", "name": "panel-8" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 0, "y": 8, "width": 3, "height": 4, "element": { "kind": "ElementReference", "name": "panel-37" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 21, "y": 8, "width": 3, "height": 4, "element": { "kind": "ElementReference", "name": "panel-82" } } }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "CPU Overview",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    { "kind": "GridLayoutItem", "spec": { "x": 0, "y": 0, "width": 12, "height": 8, "element": { "kind": "ElementReference", "name": "panel-47" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 12, "y": 0, "width": 12, "height": 8, "element": { "kind": "ElementReference", "name": "panel-49" } } }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "GPU Overview",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    { "kind": "GridLayoutItem", "spec": { "x": 0, "y": 0, "width": 12, "height": 8, "element": { "kind": "ElementReference", "name": "panel-110" } } },
+                    { "kind": "GridLayoutItem", "spec": { "x": 12, "y": 0, "width": 12, "height": 8, "element": { "kind": "ElementReference", "name": "panel-111" } } }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [],
+    "liveNow": false,
+    "preload": false,
+    "tags": [
+      "windows_exporter",
+      "nvidia_gpu_exporter"
+    ],
+    "timeSettings": {
+      "timezone": "browser",
+      "from": "now-1h",
+      "to": "now",
+      "autoRefresh": "auto",
+      "autoRefreshIntervals": [
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "hideTimepicker": false,
+      "fiscalYearStartMonth": 0
+    },
+    "title": "Mixed Windows & Nvidia GPU Overview",
+    "variables": [
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "job",
+          "current": { "text": "", "value": "" },
+          "label": "JOB",
+          "hide": "dontHide",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery", "group": "prometheus", "version": "v0",
+            "datasource": { "name": "t4f0shgRk" },
+            "spec": { "qryType": 1, "query": "label_values(windows_os_hostname,job)", "refId": "PrometheusVariableQueryEditor-VariableQuery" }
+          },
+          "regex": "", "regexApplyTo": "value", "sort": "alphabeticalAsc",
+          "definition": "label_values(windows_os_hostname,job)",
+          "options": [], "multi": false, "includeAll": false, "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "hostname",
+          "current": { "text": "", "value": "" },
+          "label": "hostname",
+          "hide": "dontHide",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery", "group": "prometheus", "version": "v0",
+            "datasource": { "name": "t4f0shgRk" },
+            "spec": { "qryType": 1, "query": "label_values(windows_os_hostname{job=~\"$job\"},hostname)", "refId": "PrometheusVariableQueryEditor-VariableQuery" }
+          },
+          "regex": "", "regexApplyTo": "value", "sort": "disabled",
+          "definition": "label_values(windows_os_hostname{job=~\"$job\"},hostname)",
+          "options": [], "multi": false, "includeAll": true, "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "instance",
+          "current": { "text": "", "value": "" },
+          "label": "instance",
+          "hide": "dontHide",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery", "group": "prometheus", "version": "v0",
+            "datasource": { "name": "t4f0shgRk" },
+            "spec": { "qryType": 1, "query": "label_values(windows_os_hostname{job=~\"$job\", hostname=~\"$hostname\"},instance)", "refId": "PrometheusVariableQueryEditor-VariableQuery" }
+          },
+          "regex": "", "regexApplyTo": "value", "sort": "disabled",
+          "definition": "label_values(windows_os_hostname{job=~\"$job\", hostname=~\"$hostname\"},instance)",
+          "options": [], "multi": false, "includeAll": false, "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "ConstantVariable",
+        "spec": {
+          "name": "separator_gpu",
+          "query": "|",
+          "current": { "text": "|", "value": "|" },
+          "label": "|",
+          "hide": "dontHide",
+          "skipUrlSync": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "gpu_job",
+          "current": { "text": "", "value": "" },
+          "label": "JOB",
+          "hide": "dontHide",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery", "group": "prometheus", "version": "v0",
+            "datasource": { "name": "t4f0shgRk" },
+            "spec": { "qryType": 1, "query": "label_values(nvidia_smi_utilization_gpu_ratio, job)", "refId": "PrometheusVariableQueryEditor-VariableQuery" }
+          },
+          "regex": "", "regexApplyTo": "value", "sort": "alphabeticalAsc",
+          "definition": "label_values(nvidia_smi_utilization_gpu_ratio, job)",
+          "options": [], "multi": false, "includeAll": false, "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "gpu_host",
+          "current": { "text": "", "value": "" },
+          "label": "gpu host",
+          "hide": "dontHide",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery", "group": "prometheus", "version": "v0",
+            "datasource": { "name": "t4f0shgRk" },
+            "spec": { "qryType": 1, "query": "label_values(nvidia_smi_utilization_gpu_ratio{job=~\"$gpu_job\"}, instance)", "refId": "PrometheusVariableQueryEditor-VariableQuery" }
+          },
+          "regex": "", "regexApplyTo": "value", "sort": "disabled",
+          "definition": "label_values(nvidia_smi_utilization_gpu_ratio{job=~\"$gpu_job\"}, instance)",
+          "options": [], "multi": false, "includeAll": true, "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "gpu_instance",
+          "current": { "text": "", "value": "" },
+          "label": "gpu instance",
+          "hide": "dontHide",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery", "group": "prometheus", "version": "v0",
+            "datasource": { "name": "t4f0shgRk" },
+            "spec": { "qryType": 1, "query": "query_result(nvidia_smi_gpu_info{job=~\"$gpu_job\"})", "refId": "PrometheusVariableQueryEditor-VariableQuery" }
+          },
+          "regex": "/instance=\"(?<value>[^\"]+)\".*name=\"(?:NVIDIA\\s*)?(?<text>[^\"]+)\"/g",
+          "regexApplyTo": "value", "sort": "disabled",
+          "definition": "query_result(nvidia_smi_gpu_info{job=~\"$gpu_job\"})",
+          "options": [], "multi": false, "includeAll": false, "allowCustomValue": true
+        }
+      }
+    ]
+  }
+}
