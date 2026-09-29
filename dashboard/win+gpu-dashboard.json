@@ -2,9 +2,9 @@
   "apiVersion": "dashboard.grafana.app/v2",
   "kind": "Dashboard",
   "metadata": {
-    "name": "win-gpu-dashboard-v1",
+    "name": "mixed-win-n-gpu-overview",
     "namespace": "default",
-    "uid": "f9db28f7-834b-4c10-9379-76485b22af80",
+    "uid": "mixed-win-n-gpu-overview",
     "resourceVersion": "1790523643556007",
     "generation": 3,
     "creationTimestamp": "2026-09-27T15:29:14Z",
@@ -24,119 +24,65 @@
       } }
     ],
     "cursorSync": "Crosshair",
-    "description": "Mixed Windows & Nvidia GPU Overview v1.22",
+    "description": "Mixed Windows & Nvidia GPU Overview v1.23",
     "editable": true,
     "elements": {
       "panel-90": {
         "kind": "Panel",
         "spec": {
-          "id": 90,
-          "title": "",
-          "description": "",
-          "links": [],
+          "id": 90, "title": "", "description": "", "links": [],
           "transparent": false,
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
-                      "datasource": { "name": "t4f0shgRk" },
-                      "spec": {
-                        "editorMode": "code",
-                        "expr": "windows_os_hostname{job=~\"$job\", instance=~\"$instance\"}",
-                        "legendFormat": "{{hostname}}",
-                        "instant": true,
-                        "range": false
-                      }
-                    },
-                    "refId": "A", "hidden": false
-                  }
-                }
-              ],
-              "transformations": [], "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig", "group": "stat", "version": "13.2.2",
-            "spec": {
-              "options": {
-                "colorMode": "none", "graphMode": "none", "justifyMode": "left",
-                "orientation": "horizontal", "percentChangeColorMode": "standard",
-                "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-                "showPercentChange": false, "textMode": "name", "wideLayout": true,
-                "text": { "valueSize": 18 }
-              },
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "none", "mappings": [],
-                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "text" }] },
-                  "color": { "mode": "fixed", "fixedColor": "text" },
-                  "noValue": "No host"
-                },
-                "overrides": []
-              }
-            }
-          }
+          "data": { "kind": "QueryGroup", "spec": { "queries": [{
+            "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": {
+              "editorMode": "code",
+              "expr": "windows_os_hostname{job=~\"$job\", instance=~\"$instance\"}",
+              "legendFormat": "{{hostname}}", "instant": true, "range": false
+            } }, "refId": "A", "hidden": false }
+          }], "transformations": [], "queryOptions": {} } },
+          "vizConfig": { "kind": "VizConfig", "group": "stat", "version": "13.2.2", "spec": {
+            "options": {
+              "colorMode": "none", "graphMode": "none", "justifyMode": "left",
+              "orientation": "horizontal", "percentChangeColorMode": "standard",
+              "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+              "showPercentChange": false, "textMode": "name", "wideLayout": true,
+              "text": { "valueSize": 18 }
+            },
+            "fieldConfig": { "defaults": {
+              "unit": "none", "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "text" }] },
+              "color": { "mode": "fixed", "fixedColor": "text" },
+              "noValue": "No host"
+            }, "overrides": [] }
+          } }
         }
       },
       "panel-91": {
         "kind": "Panel",
         "spec": {
-          "id": 91,
-          "title": "",
-          "description": "",
-          "links": [],
+          "id": 91, "title": "", "description": "", "links": [],
           "transparent": false,
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery", "group": "prometheus", "version": "v0",
-                      "datasource": { "name": "t4f0shgRk" },
-                      "spec": {
-                        "editorMode": "code",
-                        "expr": "label_join(label_replace(nvidia_smi_gpu_info{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}, \"name_short\", \"$1\", \"name\", \"NVIDIA\\\\s*(.*)\"), \"host_display\", \" - \", \"instance\", \"name_short\")",
-                        "legendFormat": "{{host_display}}",
-                        "instant": true,
-                        "range": false
-                      }
-                    },
-                    "refId": "A", "hidden": false
-                  }
-                }
-              ],
-              "transformations": [], "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig", "group": "stat", "version": "13.2.2",
-            "spec": {
-              "options": {
-                "colorMode": "none", "graphMode": "none", "justifyMode": "left",
-                "orientation": "horizontal", "percentChangeColorMode": "standard",
-                "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-                "showPercentChange": false, "textMode": "name", "wideLayout": true,
-                "text": { "valueSize": 18 }
-              },
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "none", "mappings": [],
-                  "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "text" }] },
-                  "color": { "mode": "fixed", "fixedColor": "text" },
-                  "noValue": "No GPU"
-                },
-                "overrides": []
-              }
-            }
-          }
+          "data": { "kind": "QueryGroup", "spec": { "queries": [{
+            "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": {
+              "editorMode": "code",
+              "expr": "label_join(label_replace(nvidia_smi_gpu_info{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}, \"name_short\", \"$1\", \"name\", \"NVIDIA\\\\s*(.*)\"), \"host_display\", \" - \", \"instance\", \"name_short\")",
+              "legendFormat": "{{host_display}}", "instant": true, "range": false
+            } }, "refId": "A", "hidden": false }
+          }], "transformations": [], "queryOptions": {} } },
+          "vizConfig": { "kind": "VizConfig", "group": "stat", "version": "13.2.2", "spec": {
+            "options": {
+              "colorMode": "none", "graphMode": "none", "justifyMode": "left",
+              "orientation": "horizontal", "percentChangeColorMode": "standard",
+              "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+              "showPercentChange": false, "textMode": "name", "wideLayout": true,
+              "text": { "valueSize": 18 }
+            },
+            "fieldConfig": { "defaults": {
+              "unit": "none", "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "text" }] },
+              "color": { "mode": "fixed", "fixedColor": "text" },
+              "noValue": "No GPU"
+            }, "overrides": [] }
+          } }
         }
       },
       "panel-110": {
@@ -250,8 +196,16 @@
           "id": 33, "title": "Start-up time", "description": "", "links": [],
           "data": { "kind": "QueryGroup", "spec": { "queries": [{ "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": { "editorMode": "code", "expr": "time() - process_start_time_seconds{job=~\"$job\",instance=~\"$instance\"}", "legendFormat": "", "range": true } }, "refId": "A", "hidden": false } }], "transformations": [], "queryOptions": { "maxDataPoints": 100 } } },
           "vizConfig": { "kind": "VizConfig", "group": "stat", "version": "13.2.2", "spec": {
-            "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "percentChangeColorMode": "standard", "reduceOptions": { "calcs": ["last"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
-            "fieldConfig": { "defaults": { "unit": "s", "decimals": 0, "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }], "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }, { "value": 80, "color": "red" }] }, "color": { "mode": "thresholds" } }, "overrides": [] }
+            "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "percentChangeColorMode": "standard", "reduceOptions": { "calcs": ["last"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
+            "fieldConfig": { "defaults": {
+              "unit": "s", "decimals": 0,
+              "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+              "thresholds": { "mode": "absolute", "steps": [
+                { "value": 0, "color": "dark-blue" },
+                { "value": 604800, "color": "blue" }
+              ] },
+              "color": { "mode": "thresholds" }
+            }, "overrides": [] }
           } }
         }
       },
@@ -261,8 +215,16 @@
           "id": 35, "title": "CPU cores", "description": "", "links": [],
           "data": { "kind": "QueryGroup", "spec": { "queries": [{ "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": { "editorMode": "code", "expr": "windows_cpu_logical_processor {job=~\"$job\",instance=~\"$instance\"}", "legendFormat": "", "range": true } }, "refId": "A", "hidden": false } }], "transformations": [], "queryOptions": { "maxDataPoints": 100 } } },
           "vizConfig": { "kind": "VizConfig", "group": "stat", "version": "13.2.2", "spec": {
-            "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "percentChangeColorMode": "standard", "reduceOptions": { "calcs": ["last"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
-            "fieldConfig": { "defaults": { "unit": "none", "decimals": 0, "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }], "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }, { "value": 80, "color": "red" }] }, "color": { "mode": "thresholds" } }, "overrides": [] }
+            "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "percentChangeColorMode": "standard", "reduceOptions": { "calcs": ["last"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
+            "fieldConfig": { "defaults": {
+              "unit": "cores", "decimals": 0,
+              "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+              "thresholds": { "mode": "absolute", "steps": [
+                { "value": 0, "color": "dark-blue" },
+                { "value": 16, "color": "blue" }
+              ] },
+              "color": { "mode": "thresholds" }
+            }, "overrides": [] }
           } }
         }
       },
@@ -272,8 +234,16 @@
           "id": 37, "title": "Total Memory", "description": "", "links": [],
           "data": { "kind": "QueryGroup", "spec": { "queries": [{ "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": { "editorMode": "code", "expr": "windows_memory_physical_total_bytes{job=~\"$job\",instance=~\"$instance\"}", "legendFormat": "", "range": true } }, "refId": "A", "hidden": false } }], "transformations": [], "queryOptions": { "maxDataPoints": 100 } } },
           "vizConfig": { "kind": "VizConfig", "group": "stat", "version": "13.2.2", "spec": {
-            "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "percentChangeColorMode": "standard", "reduceOptions": { "calcs": ["last"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
-            "fieldConfig": { "defaults": { "unit": "bytes", "decimals": 1, "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }], "thresholds": { "mode": "absolute", "steps": [{ "value": 0, "color": "green" }, { "value": 80, "color": "red" }] }, "color": { "mode": "thresholds" } }, "overrides": [] }
+            "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "percentChangeColorMode": "standard", "reduceOptions": { "calcs": ["last"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
+            "fieldConfig": { "defaults": {
+              "unit": "bytes", "decimals": 1,
+              "mappings": [{ "type": "special", "options": { "match": "null", "result": { "text": "N/A" } } }],
+              "thresholds": { "mode": "absolute", "steps": [
+                { "value": 0, "color": "dark-blue" },
+                { "value": 34359738368, "color": "blue" }
+              ] },
+              "color": { "mode": "thresholds" }
+            }, "overrides": [] }
           } }
         }
       },
