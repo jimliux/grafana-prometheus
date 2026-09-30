@@ -6,7 +6,7 @@
     "namespace": "default",
     "uid": "mixed-node-fleet-overview",
     "resourceVersion": "1790565999108003",
-    "generation": 39,
+    "generation": 41,
     "creationTimestamp": "2026-09-23T07:27:24Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3983666086277120"
@@ -156,7 +156,15 @@
               "fieldConfig": {
                 "defaults": {
                   "unit": "percent",
-                  "thresholds": { "mode": "percentage", "steps": [ { "value": 0, "color": "green" }, { "value": 60, "color": "#EAB839" }, { "value": 80, "color": "red" } ] },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      { "value": null, "color": "#6ED0E0" },
+                      { "value": 30,   "color": "green" },
+                      { "value": 60,   "color": "#EAB839" },
+                      { "value": 80,   "color": "red" }
+                    ]
+                  },
                   "color": { "mode": "thresholds", "fixedColor": "#ad46ff" }
                 },
                 "overrides": []
