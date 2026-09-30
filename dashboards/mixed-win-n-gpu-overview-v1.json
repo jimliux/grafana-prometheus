@@ -24,7 +24,7 @@
       } }
     ],
     "cursorSync": "Crosshair",
-    "description": "Mixed Windows & Nvidia GPU Overview v1.27",
+    "description": "Mixed Windows & Nvidia GPU Overview v1.28",
     "editable": true,
     "elements": {
       "panel-90": {
@@ -36,7 +36,7 @@
             "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": {
               "editorMode": "code",
               "expr": "(100 - (avg by (instance) (irate(windows_cpu_time_total{job=~\"$job\",instance=~\"$instance\",mode=\"idle\"}[2m])) * 100)) * on(instance) group_left(hostname) (windows_os_hostname{job=~\"$job\", instance=~\"$instance\"} * 0 + 1)",
-              "legendFormat": "{{hostname}}", "instant": true, "range": false
+              "legendFormat": "Windows - {{hostname}}", "instant": true, "range": false
             } }, "refId": "A", "hidden": false }
           }], "transformations": [], "queryOptions": {} } },
           "vizConfig": { "kind": "VizConfig", "group": "stat", "version": "13.2.2", "spec": {
@@ -70,7 +70,7 @@
             "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": {
               "editorMode": "code",
               "expr": "label_join(label_replace((nvidia_smi_temperature_gpu{job=~\"$gpu_job\", instance=~\"$gpu_instance\"}) * on(instance) group_left(name) (nvidia_smi_gpu_info{job=~\"$gpu_job\"} * 0 + 1), \"name_short\", \"$1\", \"name\", \"NVIDIA\\\\s*(.*)\"), \"host_display\", \" - \", \"instance\", \"name_short\")",
-              "legendFormat": "{{host_display}}", "instant": true, "range": false
+              "legendFormat": "Nvidia - {{host_display}}", "instant": true, "range": false
             } }, "refId": "A", "hidden": false }
           }], "transformations": [], "queryOptions": {} } },
           "vizConfig": { "kind": "VizConfig", "group": "stat", "version": "13.2.2", "spec": {
@@ -121,7 +121,7 @@
         "kind": "Panel",
         "spec": {
           "id": 111, "title": "GPU Memory Utilization by Host",
-          "description": "每条线代表一台 GPU 主机。同一显卡的两条线：虚线 = Util，实线 = Alloc。",
+          "description": "每条线代表一台 GPU 主机。同一显卡的两条线：实线 = GPU Memory Allocation (actual allocated)，虚线 = GPU Memory Utilization (how busy reading/writing)",
           "links": [],
           "data": { "kind": "QueryGroup", "spec": { "queries": [
             { "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": {
@@ -281,7 +281,9 @@
       "panel-49": {
         "kind": "Panel",
         "spec": {
-          "id": 49, "title": "Memory Usage by Host", "description": "", "links": [],
+          "id": 49, "title": "Memory Usage by Host",
+          "description": "每条线代表一台 PC 主机。同一内存的两条线：实线 = Physical Memory Usage (actual in use)，虚线 = Committed Memory Usage (committed amount)",
+          "links": [],
           "data": { "kind": "QueryGroup", "spec": { "queries": [
             { "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": { "editorMode": "code", "expr": "100.0 - 100 * windows_memory_physical_free_bytes {job=~\"$job\"} / windows_memory_physical_total_bytes{job=~\"$job\"}", "legendFormat": "{{instance}}", "range": true } }, "refId": "A", "hidden": false } },
             { "kind": "PanelQuery", "spec": { "query": { "kind": "DataQuery", "group": "prometheus", "version": "v0", "datasource": { "name": "t4f0shgRk" }, "spec": { "editorMode": "code", "expr": "100 * windows_memory_committed_bytes{job=~\"$job\"} / windows_memory_commit_limit{job=~\"$job\"}", "legendFormat": "{{instance}}", "range": true } }, "refId": "B", "hidden": false } }
