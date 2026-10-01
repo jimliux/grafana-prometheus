@@ -6,7 +6,7 @@
     "namespace": "default",
     "uid": "mixed-node-fleet-overview",
     "resourceVersion": "1790565999108003",
-    "generation": 48,
+    "generation": 49,
     "creationTimestamp": "2026-09-23T07:27:24Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3983666086277120"
@@ -39,7 +39,7 @@
       }
     ],
     "cursorSync": "Off",
-    "description": "Per-host CPU busy percentage and /opt disk headroom for a label-selected fleet, from node_exporter. Filter with the Node variable. Part of the oyatrino-o11y-labs reference stack.",
+    "description": "mixed-node-fleet-overview v1.12: Per-host CPU busy percentage and /opt disk headroom for a label-selected fleet, from node_exporter. Filter with the Node variable. Part of the oyatrino-o11y-labs reference stack.",
     "editable": true,
     "elements": {
       "panel-10": {
