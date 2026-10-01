@@ -6,7 +6,7 @@
     "namespace": "default",
     "uid": "mixed-node-fleet-overview",
     "resourceVersion": "1790565999108003",
-    "generation": 46,
+    "generation": 48,
     "creationTimestamp": "2026-09-23T07:27:24Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3983666086277120"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:efz34wrve07i8d",
       "grafana.app/saved-from-ui": "Grafana v13.2.2 (1bea008f7e)",
       "grafana.app/updatedBy": "user:efz34wrve07i8d",
-      "grafana.app/updatedTimestamp": "2026-09-30T00:00:00Z"
+      "grafana.app/updatedTimestamp": "2026-10-01T00:00:00Z"
     }
   },
   "spec": {
@@ -1651,7 +1651,7 @@
     "links": [],
     "liveNow": false,
     "preload": false,
-    "tags": ["node", "node_exporter", "fleet", "linux", "mac", "dgx"],
+    "tags": ["node_exporter", "linux", "mac", "dgx", "dgx-spark", "fleet"],
     "timeSettings": {
       "timezone": "utc",
       "from": "now-12h",
