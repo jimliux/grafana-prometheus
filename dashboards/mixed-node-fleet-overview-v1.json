@@ -5,11 +5,41 @@
     "name": "mixed-node-fleet-overview",
     "namespace": "default",
     "uid": "mixed-node-fleet-overview",
-    "generation": 49
+    "resourceVersion": "1790565999108003",
+    "generation": 49,
+    "creationTimestamp": "2026-09-23T07:27:24Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "3983666086277120"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:efz34wrve07i8d",
+      "grafana.app/saved-from-ui": "Grafana v13.2.2 (1bea008f7e)",
+      "grafana.app/updatedBy": "user:efz34wrve07i8d",
+      "grafana.app/updatedTimestamp": "2026-10-01T00:00:00Z"
+    }
   },
   "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "datasource": { "name": "-- Grafana --" },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "builtIn": true
+        }
+      }
+    ],
     "cursorSync": "Off",
-    "description": "mixed-node-fleet-overview v1.12",
+    "description": "mixed-node-fleet-overview v1.12: Per-host CPU busy percentage and /opt disk headroom for a label-selected fleet, from node_exporter. Filter with the Node variable. Part of the oyatrino-o11y-labs reference stack.",
     "editable": true,
     "elements": {
       "panel-10": {
@@ -1618,6 +1648,7 @@
         ]
       }
     },
+    "links": [],
     "liveNow": false,
     "preload": false,
     "tags": ["node_exporter", "linux", "mac", "dgx", "dgx-spark", "fleet"],
